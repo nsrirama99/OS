@@ -1,0 +1,27 @@
+The argument supplied is samplefile-1.txt
+5 10
+C 1 
+Dish <5> produced 
+<1> assigned to <-242854144>
+C 12 
+Dish <5> produced 
+<12> assigned to <-268032256>
+C 3 
+O 
+P 10 
+Dish <1> produced 
+Dish <2> produced 
+Dish <1> produced 
+Dish <1> produced 
+Dish <8> produced 
+Dish <4> produced 
+Dish <0> produced 
+Dish <4> produced 
+<3> assigned to <-234461440>
+<-234461440> picked up <5>
+<-268032256> picked up <5>
+<-242854144> picked up <1>
+<-234461440> picked up <2>
+<-242854144> picked up <1>
+Segmentation fault (core dumped)
+

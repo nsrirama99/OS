@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-//Including code to create the FIFO queue within this 
+//Including code to create the FIFO queue within this
 //program instead of making a separate program
 struct node {
     int data;
@@ -37,6 +37,7 @@ void initialize(Queue *q, int size) {
 bool isEmpty(Queue *q) { return (q->front == NULL); }
 bool isFull(Queue *q) { return (q->count == q->maxSize); }
 int peek(Queue *q) { return (q->front->data); }
+int getCount(Queue *q) { return (q->count); }
 
 void enQueue(Queue *q, int value) {
     Node *tmp;
@@ -68,4 +69,3 @@ int deQueue(Queue *q) {
 void alterSize(Queue *q, int size) {
     q->maxSize = size;
 }
-

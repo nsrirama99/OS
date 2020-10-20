@@ -1,0 +1,239 @@
+5 10
+C 1 
+Dish <6> produced 
+CUST 1 DISHES 4 INDEX 4
+<1> assigned to <-1448003840>
+C 12 
+Dish <8> produced 
+CUST 12 DISHES 3 INDEX 0
+<12> assigned to <-1414433024>
+C 3 
+O 
+P 10 
+Dish <2> produced 
+Dish <3> produced 
+Dish <6> produced 
+Dish <4> produced 
+Dish <1> produced 
+Dish <1> produced 
+Dish <7> produced 
+Dish <1> produced 
+CUST 3 DISHES 7 INDEX 3
+<3> assigned to <-1439611136>
+Customer 3 looking for 6
+<-1439611136> picked up <6>
+End of for loop looking for food for CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Customer 3 looking for 5
+End of for loop looking for food for CUST 3
+DIDNT FIND FOOD CUST 3
+Customer 3 looking for 6
+Customer 3 looking for 6
+Customer 3 looking for 2
+Customer 3 looking for 2
+Customer 3 looking for 3
+Customer 3 looking for 4
+Segmentation fault (core dumped)
