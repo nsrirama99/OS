@@ -29,10 +29,12 @@ sem_t crayonBox; //Semaphore for using the availableCrayons array
 
 bool *tableOccupied; //Array to tell when a table is occupied or not
 bool start = false; //Boolean to tell tables when they are all full (and customers can start asking for crayons)
+bool done = false; //Boolean to signal when the art businesss is ready to close
 
 bool custBufferReady = true; //Boolean to tell threads that it is safe to pull customer information from global variables
 int custName = 0; //Stores the name of a customer that is looking to sit at a table
 int **wants; //Multi-dimensional array that holds what crayons each customer at a table currently wants
+int **maxNeeds; //Multi-dimensional arrray that holds the max number of crayons of each type a customer may need at any given time
 int **obtained; //Multi-dimensional array that holds how many crayons of each type a customer has received
 int **request; //Multi-dimensional array that holds if a customer is requesting a type of crayon
 
@@ -91,6 +93,17 @@ int main(int argc, char const *argv[]) {
     request[j] = (int *)malloc(crayTypes * sizeof(int));
   }
 
+
+  maxNeeds = (int **)malloc(numTables * sizeof(int *));
+  /*
+  this allocates memory for an array of the max number of each type of crayons
+  each occupied table may request. It loops a number of times equal to the
+  number of tables
+  */
+  for(int j = 0; j < numTables; j++) {
+    maxNeeds[j] = (int *)malloc(crayTypes * sizeof(int));
+  }
+
   /*
   This reads in from the input file how many of each crayon type are available
   at the business. It loops a number of times equal to the number of types of
@@ -98,7 +111,6 @@ int main(int argc, char const *argv[]) {
   */
   for (int j = 0; j < crayTypes; j++) {
     fscanf(f, "%d", &availableCrayons[j]);
-    printf("%d\n", availableCrayons[j]);
   }
 
 
@@ -118,7 +130,6 @@ int main(int argc, char const *argv[]) {
   */
   while (!feof(f)) {
     //While all tables are filled, do nothing. When a table becomes empty it breaks
-    while(tablesFilled()) {} //TODODODODODODODODODOD I don't think stalling here is correct
 
     int table = pickTable(numTables); //This number corresponds to the index of a table where a customer is assigned
 
@@ -137,6 +148,7 @@ int main(int argc, char const *argv[]) {
     */
     for(int j = 0; j < crayTypes; j++) {
       fscanf(f, "%d", &wants[table][j]);
+      maxNeeds[table][j] = wants[table][j];
       obtained[table][j] = 0;
     }
 
@@ -148,12 +160,14 @@ int main(int argc, char const *argv[]) {
     business has not started, this will check if all tables are full, if they
     are, it will signal that customers can start requesting crayons
     */
-    if(!start)
-      if(tablesFilled())
-        start = true;
+    if(tablesFilled())
+      start = true;
+
+    while(tablesFilled()) {}
   }
 
-//TODODODODODODODODODOD FINISH JOINING THREADS BACK AT THE ENDDDDDDDDDDDD
+  done = true;
+
   /*
   This loop joins all of the created threads back to the main thread.
   It loops equal to the number of tables in the business
@@ -166,6 +180,8 @@ int main(int argc, char const *argv[]) {
   free(tid);
   free(availableCrayons);
   free(wants);
+  free(obtained);
+  free(request);
 
   return 0;
 } //end of main() function
@@ -255,7 +271,7 @@ void *tableRunner(void *params) {
     while(!tableOccupied[index]) { if(done) return; }
 
     int cust = custName;      //The customer's "name"
-    int totalC = 0;           //keep track of how many crayons (of any type) customer still needs
+    int totalC = 0;           //keep track of how many total crayons (of any type) customer still needs
 
     /*
     Loops through the crayon types and accumulates a total number of crayons which a customer wants
@@ -263,7 +279,7 @@ void *tableRunner(void *params) {
     for(int j = 0; j < crayTypes; j++) {
       totalC += wants[index][j];
     }
-    printf("Customer <%d> is seated at table <%d>\n", custName, index);
+    printf("Customer <%d> is seated at table <%d>\n", cust, index);
     custBufferReady = true;
 
     //If after sitting a customer at the table, all tables are filled, start the business
@@ -275,21 +291,31 @@ void *tableRunner(void *params) {
 
     //While loop for simulating a customer at the table. Ends when the customer leaves
     while(tableOccupied[index]) {
-      //TODODODODODODODODODOD Finish picking crayons & requesting them
-      int toReq = -1; //integer to represent what crayon type a customer is going to try and select
-
-      /*
-      while loop to select a random crayon that a customer still wants.
-      The loop is used to not allow for customers to try requesting crayons
-      which they don't need anymore of
-      */
-      do {
-        toReq = lrand48()%crayTypes;
-      } while(wantC[toReq] == 0);
-
-      printf("Customer <%d> request crayon type <%d>\n", custName, toReq);
 
       //TODODODODODODODODODOD MAKE REQUEST HERE
+      int s = 0; //integer signifying whether a request was allowed or not
+      do {
+        int toReq = -1; //integer to represent what crayon type a customer is going to try and select
+
+        /*
+        while loop to select a random crayon that a customer still wants.
+        The loop is used to not allow for customers to try requesting crayons
+        which they don't need anymore of
+        */
+        do {
+          toReq = lrand48()%crayTypes;
+        } while(wants[index][toReq] == 0);
+
+        printf("Customer <%d> request crayon type <%d>\n", cust, toReq);
+
+        s = Request(index, toReq);
+        if(s == 0)
+          printf("Request denied\n");
+      } while(s == 0);
+      printf("Request accepted\n");
+      totalC--;
+
+
 
       req.tv_sec = 0;
       req.tv_nsec = lrand48()%1000 + 1;
@@ -300,7 +326,7 @@ void *tableRunner(void *params) {
       they'll complete their art and leave
       */
       if(totalC == 0) {
-        printf("Customer <%d> received all the crayons\n", custName);
+        printf("Customer <%d> received all the crayons\n", cust);
         //sleep for 1-3 seconds
         req.tv_sec = 0;
         req.tv_nsec = lrand48()%2001 + 1000;
@@ -311,7 +337,7 @@ void *tableRunner(void *params) {
         sem_wait(&tipUpdate);
         tipBox += tip;
         sem_post(&tipUpdate);
-        printf("Customer <%d> leaves a tip of <%d>\n", custName, tip);
+        printf("Customer <%d> leaves a tip of <%d>\n", cust, tip);
 
         //TODODODODODODODODODOD Return crayons to the bin
 
@@ -342,17 +368,100 @@ This function takes care of requests a table is making for a type of crayon.
 Each request is for 1 instance of a specific crayon
 */
 int Request(int tableId, int crayonType) {
+  printf("Request is being made...\n");
+  printf("Tipbox currently contains: $%d\n", tipBox);
+  printf("List of Crayons still available: ");
+  for(int k = 0; k < crayTypes; k++) {
+    printf("%d, ", availableCrayons[k]);
+  }
+  printf("\nCrayons still wanted by tables in order: ");
+  for(int j = 0; j < numTables; j++) {
+    printf("Table %d: ", j);
+    for(int k = 0; k < crayTypes; k++) {
+      printf("%d, ", wants[j][k]);
+    }
+    printf("\n");
+  }
+
+  printf("\nCrayons that have been obtained by tables in order");
+  for(int j = 0; j < numTables; j++) {
+    printf("Table %d: ", j);
+    for(int k = 0; k < crayTypes; k++) {
+      printf("%d, ", obtained[j][k]);
+    }
+    printf("\n");
+  }
+
   sem_wait(&crayonBox);
 
+  request[tableId][crayonType] = 1; //this might go outside of the semaphore
   int accden = 0; //signifies whether request was accepted or denied
 
   //if there are no more crayons of given type, deny request
-  //Otherwise, subtract 1 from crayon type, and allow request
+  //Otherwise, check if allowing request would result in a deadlock
   if(availableCrayons[crayonType] == 0) {
-    //deny request
+    //deny request due to insufficient resources
   } else {
+    //pretend to give crayon to customer to see if deadlock occurs
     availableCrayons[crayonType] -= 1;
-    accden = 1;
+    wants[tableId][crayonType] -= 1;
+    obtained[tableId][crayonType] += 1;
+
+    int work[crayTypes];
+    for(int j = 0; j < crayTypes; j++) {
+      work[j] = availableCrayons[j];
+    }
+
+    bool finish[numTables];
+    bool flag = false;
+    for(int j = 0; j < numTables; j++) {
+
+      for(int k = 0; k < crayTypes; k++) {
+        if(request[j][k] > 0) {
+          flag = true;
+          break;
+        } //end of if
+      } //end of inner for loop
+      if(flag)
+        finish[j] = false;
+      else
+        finish[j] = true;
+    } //end of outer for loop
+
+    flag = false;
+    for(int j = 0; j < numTables; j++) {
+      bool flag_two = false;
+      for(int k = 0; k < crayTypes; k++) {
+        if(request[j][k] > work[k])
+          flag_two = true;
+      } //end of inner forloop
+
+      if(!finish[j] && !flag_two)
+        flag = true;
+    } //end of outer forloop
+
+    bool flag_three = false;
+    if(!flag) {
+      for(int j = 0; j < numTables; j++) {
+        if(!finish[j]) {
+          flag_three = true;
+        }
+      }
+    }
+
+    /*
+    The flag_three will only trigger if a deadlock was found, in which case
+    we undo the crayon request
+    */
+    if(flag_three) {
+      //undo the request
+      availableCrayons[crayonType] += 1;
+      wants[tableId][crayonType] += 1;
+      obtained[tableId][crayonType] -= 1;
+    } else {
+      //request is being granted, so don't undo anything
+      accden = 1;
+    }
   }
 
   sem_post(&crayonBox);
