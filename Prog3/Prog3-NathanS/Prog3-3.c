@@ -1,3 +1,9 @@
+/*
+This is the deadlock prevention algorithm implementation. For this assignment
+I implemented pre-emption when a table requests crayons. Essentially, when a
+request is denied all the crayons which a table holds will be returned to the bin.
+*/
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -142,174 +148,13 @@ int main(int argc, char const *argv[]) {
     if(tablesFilled())
       start = true;
 
-      /*
-      While all tables are filled, Loop through a deadlock detection algorith.
-      When any table becomes empty it breaks
-      */
-      while(tablesFilled()) {
-        req.tv_sec = 0;
-        req.tv_nsec = 4000;
-        nanosleep(&req, NULL);
-
-        int work[crayTypes];
-        for(int j = 0; j < crayTypes; j++) {
-          work[j] = availableCrayons[j];
-        }
-
-        bool finish[numTables];
-        bool flag = false;
-        for(int j = 0; j < numTables; j++) {
-
-          for(int k = 0; k < crayTypes; k++) {
-            if(request[j][k] > 0) {
-              flag = true;
-              break;
-            } //end of if
-          } //end of inner for loop
-          if(flag)
-            finish[j] = false;
-          else
-            finish[j] = true;
-        } //end of outer for loop
-
-        flag = false;
-        for(int j = 0; j < numTables; j++) {
-          bool flag_two = false;
-          for(int k = 0; k < crayTypes; k++) {
-            if(request[j][k] > work[k])
-              flag_two = true;
-          } //end of inner forloop
-
-          if(!finish[j] && !flag_two)
-            flag = true;
-        } //end of outer forloop
-
-        bool flag_three = false;
-        if(!flag) {
-          for(int j = 0; j < numTables; j++) {
-            if(!finish[j]) {
-              flag_three = true;
-            }
-          }
-
-          if(flag_three) {
-            printf("Hello, there is going to be a deadlock in the current program!\n");
-            printf("Tipbox currently contains: $%d\n", tipBox);
-            printf("List of Crayons still available: ");
-            for(int k = 0; k < crayTypes; k++) {
-              printf("%d, ", availableCrayons[k]);
-            }
-            printf("\nCrayons still wanted by tables in order: \n");
-            for(int j = 0; j < numTables; j++) {
-              printf("Table %d: ", j);
-              for(int k = 0; k < crayTypes; k++) {
-                printf("%d, ", wants[j][k]);
-              }
-              printf("\n");
-            }
-
-            printf("\nCrayons that have been obtained by tables in order\n");
-            for(int j = 0; j < numTables; j++) {
-              printf("Table %d: ", j);
-              for(int k = 0; k < crayTypes; k++) {
-                printf("%d, ", obtained[j][k]);
-              }
-              printf("\n");
-            }
-            printf("Program now exiting....\n");
-            return 0;
-          }
-
-        } //end if !flag
-
-      } //end while tabledFilled
+      //While all tables are filled, do nothing. When a table becomes empty it breaks
+      while(tablesFilled()) {} //end while tabledFilled
 
   } //end reading file of customers
 
   done = true;
 
-  /*
-  When the file is done reading in new customers, we still have to check every
-  4 seconds for a deadlock, so loop through the detection algorithm as long as
-  at least 1 table has a customer at it
-  */
-  while(singleTableFilled()) {
-    req.tv_sec = 0;
-    req.tv_nsec = 4000;
-    nanosleep(&req, NULL);
-
-    int work[crayTypes];
-    for(int j = 0; j < crayTypes; j++) {
-      work[j] = availableCrayons[j];
-    }
-
-    bool finish[numTables];
-    bool flag = false;
-    for(int j = 0; j < numTables; j++) {
-
-      for(int k = 0; k < crayTypes; k++) {
-        if(request[j][k] > 0) {
-          flag = true;
-          break;
-        } //end of if
-      } //end of inner for loop
-      if(flag)
-        finish[j] = false;
-      else
-        finish[j] = true;
-    } //end of outer for loop
-
-    flag = false;
-    for(int j = 0; j < numTables; j++) {
-      bool flag_two = false;
-      for(int k = 0; k < crayTypes; k++) {
-        if(request[j][k] > work[k])
-          flag_two = true;
-      } //end of inner forloop
-
-      if(!finish[j] && !flag_two)
-        flag = true;
-    } //end of outer forloop
-
-    bool flag_three = false;
-    if(!flag) {
-      for(int j = 0; j < numTables; j++) {
-        if(!finish[j]) {
-          flag_three = true;
-        }
-      }
-
-      if(flag_three) {
-        printf("Hello, there is going to be a deadlock in the current program!\n");
-        printf("Tipbox currently contains: $%d\n", tipBox);
-        printf("List of Crayons still available: ");
-        for(int k = 0; k < crayTypes; k++) {
-          printf("%d, ", availableCrayons[k]);
-        }
-        printf("\nCrayons still wanted by tables in order: \n");
-        for(int j = 0; j < numTables; j++) {
-          printf("Table %d: ", j);
-          for(int k = 0; k < crayTypes; k++) {
-            printf("%d, ", wants[j][k]);
-          }
-          printf("\n");
-        }
-
-        printf("\nCrayons that have been obtained by tables in order\n");
-        for(int j = 0; j < numTables; j++) {
-          printf("Table %d: ", j);
-          for(int k = 0; k < crayTypes; k++) {
-            printf("%d, ", obtained[j][k]);
-          }
-          printf("\n");
-        }
-        printf("Program now exiting....\n");
-        return 0;
-      }
-
-    } //end if !flag
-
-  } //end of while singleTableFilled
 
   /*
   This loop joins all of the created threads back to the main thread.
@@ -439,6 +284,7 @@ void *tableRunner(void *params) {
     //Stall the table while the business hasn't started
     while(!start) {}
 
+
     //While loop for simulating a customer at the table. Ends when the customer leaves
     while(tableOccupied[index]) {
       int toReq = -1; //integer to represent what crayon type a customer is going to try and select
@@ -452,12 +298,10 @@ void *tableRunner(void *params) {
         toReq = lrand48()%crayTypes;
       } while(wants[index][toReq] == 0);
 
-
       int s = 0; //integer signifying whether a request was allowed or not
       /*
-      For Deadlock detection a customer should continue requesting a crayon
-      indefinitely, so this while loop simulates that. When a request for a
-      crayon has been allowed it will break
+      For Deadlock Prevention customer will try to request a crayon in order
+      until those requests are successfully granted
       */
       do {
         printf("Customer <%d> request crayon type <%d>\n", cust, toReq);
@@ -467,6 +311,7 @@ void *tableRunner(void *params) {
       } while(s == 0);
       printf("Request accepted\n");
       totalC --;
+
 
       req.tv_sec = 0;
       req.tv_nsec = lrand48()%1000 + 1;
@@ -524,10 +369,19 @@ int Request(int tableId, int crayonType) {
 
   int accden = 0; //signifies whether request was accepted or denied
 
-  //if there are no more crayons of given type, deny request
+  //if there are no more crayons of given type, deny request. For deadlock
+  //prevention, a denial will release all crayons that a table holds
   //Otherwise, subtract 1 from crayon type, and allow request
   if(availableCrayons[crayonType] == 0) {
-    //deny request
+    /*
+    This for loop will return all crayons that a table has to the crayon box,
+    effectively pre-empting its resources
+    */
+    for(int j = 0; j < crayTypes; j++) {
+      availableCrayons[j] += obtained[tableId][j];
+      wants[tableId][j] += obtained[tableId][j];
+      obtained[tableId][j] = 0;
+    }
   } else {
     availableCrayons[crayonType] -= 1;
     wants[tableId][crayonType] -= 1;
