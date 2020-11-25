@@ -123,15 +123,18 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
 
       //get the page and insert it into main memory
       //then, add the reference to the page table
-      Entry temp = p.GetPage(m);
-      frame->set(ind, temp);
-      pageTable.insert({ pseudokey(p, m), pseudoval(ind) });
+      //Entry temp = p.GetPage(m);
+      //frame->set(ind, temp);
+     P2F(p, m, frame, victim);
+     pageTable.insert({ pseudokey(p, m), pseudoval(ind) });
 
       //if we are using fifo replacement policy, add the page to our queue
       if(this.policy == 1) {
         auto itr = pageTable.find(pseudokey(p,m));
         fifo.push(itr);
       }
+
+      return ind;
 
     } else { //if the code reaches this point the pageTable is full and a victim page must be selected
       int victim;
@@ -202,7 +205,23 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
 
             break;
       }
-    }
+
+      //get the page and insert it into main memory
+      //then, add the reference to the page table
+      P2F(p, m, frame, victim);
+      //Entry temp = p.GetPage(m);
+      //frame->set(ind, temp);
+      pageTable.insert({ pseudokey(p, m), pseudoval(victim) });
+
+      //if we are using fifo replacement policy, add the page to our queue
+      if(this.policy == 1) {
+        auto itr = pageTable.find(pseudokey(p,m));
+        fifo.push(itr);
+      }
+
+      return victim;
+
+    } //end of if the page is not loaded into memory
 
 
   }//end outer else
