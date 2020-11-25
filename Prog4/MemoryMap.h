@@ -74,7 +74,8 @@ private:
 
    //my page table, created as a map
    map<pseudokey, pseudoval> pageTable;
-   queu<map<pseudokey, pseudoval>::iterator> fifo;
+   //Queue used for the FIFO policy
+   queue<map<pseudokey, pseudoval>::iterator> fifo;
 
 };
 
@@ -105,8 +106,9 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
     return itr->second.getF();
   } else { //will run if the page is not loaded in main memory
     if(pageTable.size() < this.psize) { //if there is a free frame
+
       /*The following code identifies a free frame by excluding any
-      non-free frames. I had to do it this way becaus the constructor
+      non-free frames. I did it this way because the constructor
       doesn't have access to the Memory object to create an initial set
       of free frames*/
       vector<int> v;
@@ -119,10 +121,13 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
         ind = rand() % frame->Size();
       } while(find(v.begin(), v.end(), ind) != v.end());
 
+      //get the page and insert it into main memory
+      //then, add the reference to the page table
       Entry temp = p.GetPage(m);
       frame->set(ind, temp);
       pageTable.insert({ pseudokey(p, m), pseudoval(ind) });
 
+      //if we are using fifo replacement policy, add the page to our queue
       if(this.policy == 1) {
         auto itr = pageTable.find(pseudokey(p,m));
         fifo.push(itr);
@@ -163,9 +168,38 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
             break;
 
         case 1:
+	//FIFO method. Frames are saved to queue as they enter, so just use the queue.front()
+	    auto it = fifo.front();
+
+	    //save frame back to its process' page
+	    F2P(frame, it->second.getF(), it->first.getP(), it->first.getN());
+
+	    //save frame number to insert new page into main memory
+	    victim = it->second.getF();
+
+	    //delete the iterator/item from page table
+	    this.pageTable.erase(it);
+
+	    //pop iterator from fifo queue
+	    fifo.pop();
             break;
 
         case 2:
+	//The method I chose for the extra credit portion was to randomly choose an element from the page table
+	    int ind = rand() % this.pageTable.size();
+	    auto it = this.pageTable.begin();
+	    for(int j = 0; j < ind; j ++)
+		it++;
+
+	    //save frame back to its process' page
+	    F2P(frame, it->second.getF(), it->first.getP(), it->first.getN());
+
+	    //save frame number to insert new page into main memory
+	    victim = it->second.getF();
+
+	    //delete the iterator/item from page table
+	    this.pageTable.erase(it);
+
             break;
       }
     }
