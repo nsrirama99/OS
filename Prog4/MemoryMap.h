@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <map>
+#include <queue>
 #include <iterator>
 #include <ctime>
 
@@ -34,6 +35,11 @@ public:
   int pNum;
 };
 
+/*
+The following class was created in order to allow values within my pageTable
+to also include a value indicating the time it was last called, in order to
+implement an LRU algorithm
+*/
 class pseudoval {
 public:
   pseudoval(int f) {this.lastUse = time(NULL); this.frameNum = f;};
@@ -63,8 +69,12 @@ private:
    int psize;
    int policy;
 
+   int pfcalls;
+   int fpcalls;
+
    //my page table, created as a map
-   map<pseudokey, pseudoval> pageTable; //int refers to frame number within main memory
+   map<pseudokey, pseudoval> pageTable;
+   queu<map<pseudokey, pseudoval>::iterator> fifo;
 
 };
 
@@ -79,8 +89,8 @@ ostream& operator<<(ostream& os, MemoryMap& mm)
 MemoryMap::MemoryMap(int ptsize, int policy) {
   this.psize = ptsize;
   this.policy = policy;
-
-
+  pfcalls = 0;
+  fpcalls = 0;
 }
 
 
@@ -113,36 +123,50 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
       frame->set(ind, temp);
       pageTable.insert({ pseudokey(p, m), pseudoval(ind) });
 
+      if(this.policy == 1) {
+        auto itr = pageTable.find(pseudokey(p,m));
+        fifo.push(itr);
+      }
+
     } else { //if the code reaches this point the pageTable is full and a victim page must be selected
       int victim;
       switch (this.policy) {
         case 0: //utilizing LRU to identify victim page
-          //victim = LRUVictim();
-          int ind = 0; //used to store "index" within the page table map
-          time_t lowestTime = time(NULL); //initialize this to current time
-          int k = 0;
-          for(auto j = pageTable.begin(); j != pageTable.end(); j++) {
-            if(j->second.getT() < lowestTime) {
-              ind = k;
-              lowestTime = j->second.getT();
-            }
-            k++;
-          } //end forloop
+            //victim = LRUVictim();
+            int ind = 0; //used to store "index" within the page table map
+            time_t lowestTime = time(NULL); //initialize this to current time
+            int k = 0;
+            for(auto j = pageTable.begin(); j != pageTable.end(); j++) {
+              if(j->second.getT() < lowestTime) {
+                  ind = k;
+                  lowestTime = j->second.getT();
+              }
+              k++;
+            } //end forloop
 
-          map<pseudokey, pseudoval>::iterator it = pageTable.begin();
-          for(int j = 0; j < ind; j++)
-            it++;
+            map<pseudokey, pseudoval>::iterator it = pageTable.begin();
+            for(int j = 0; j < ind; j++)
+                it++;
 
+
+          //Process &p, int pid, int m, Memory* frame
           //save frame back to page
-          //delete entry in frame
+            F2P(frame, it->second.getF(), it->first.getP(), it->first.getN());
+
+          //save the frame number to insert the new page into main memory
+            victim = it->second.getF();
+
           //delete that iterator/item from the page table
-          break;
+            this.pageTable.erase(it);
+
+
+            break;
 
         case 1:
-          break;
+            break;
 
         case 2:
-          break;
+            break;
       }
     }
 
@@ -150,3 +174,24 @@ int MemoryMap::GetFrame(Process &p, int pid, int m, Memory* frame) {
   }//end outer else
 
 }//end getframe function
+
+
+void MemoryMap::P2F(Process &p, int m, Memory* frame, int f) {
+  this.pfcalls++;
+
+  Entry e = p.GetPage(m);
+  f->set(f, e);
+} //end of P2F method
+
+void MemoryMap::F2P(Memory* frame, int f, Process &p, int m) {
+  this.fpcalls++;
+
+  Entry e = frame->get(f);
+  p.SetPage(m, e);
+
+} //end of F2P method
+
+
+int MemoryMap::P2FCalled() {return pfcalls;}
+
+int MemoryMap::F2PCalled() {return fpcalls;}
