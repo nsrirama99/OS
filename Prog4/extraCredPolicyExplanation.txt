@@ -1,0 +1,15 @@
+Nathan Srirama
+
+My implementation for page replacement:
+
+I chose to randomly choose pages for replacement.
+All my algorithm does is choose an index that is less
+than or equal to the size of the page table. There is no
+overhead and no additional memory has to be allocated for 
+the algorithm.
+
+Choosing pages this way allows me to ignore the contents of Process
+objects and the Frame contents completely. In addition, there is no
+additional storage required for the algorithm. It will run fast,
+and I predict for a large sized page table it will perform relatively
+well on average.
